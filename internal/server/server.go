@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"net/http"
 
 	"auth-service/internal/config"
@@ -8,10 +9,15 @@ import (
 )
 
 func Serve() {
-	var mux = http.NewServeMux()
-	var port = config.GetConfig().AppPort
+	mux := http.NewServeMux()
+	port := config.GetConfig().AppPort
 
 	routes.InitAuthRoutes(mux)
 
-	http.ListenAndServe(":"+port, mux)
+	log.Printf("[INFO] Server started at http://localhost:%s\n", port)
+
+	err := http.ListenAndServe(":"+port, mux)
+	if err != nil {
+		log.Fatalf("[ERROR] Failed to start server: %v", err)
+	}
 }
