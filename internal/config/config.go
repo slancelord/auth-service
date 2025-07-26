@@ -8,13 +8,14 @@ import (
 )
 
 type Config struct {
-	AppPort string
+	AppPort   string
+	JWTSecret string
 }
 
 var config *Config
 
 func getEnv(key string, defaultValue string) string {
-	var value, exist = os.LookupEnv(key)
+	value, exist := os.LookupEnv(key)
 	if exist {
 		return value
 	}
@@ -36,6 +37,7 @@ func InitConfig() {
 	}
 
 	config = &Config{
-		AppPort: getEnv("APP_PORT", "8080"),
+		AppPort:   getEnv("APP_PORT", "8080"),
+		JWTSecret: getEnv("JWT_SECRET", "defaultsecret"),
 	}
 }
