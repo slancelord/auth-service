@@ -23,7 +23,7 @@ func GenerateToken(guid string) (string, string, error) {
 		"exp": exp,
 	})
 
-	accessString, err := accessToken.SignedString(secretKey)
+	accessString, err := accessToken.SignedString([]byte(secretKey))
 	if err != nil {
 		return "", "", err
 	}
