@@ -1,0 +1,35 @@
+info:
+  contact: {}
+paths:
+  /auth/token:
+    post:
+      consumes:
+      - application/json
+      description: Генерирует access и refresh токены по GUID
+      parameters:
+      - description: GUID пользователя
+        in: query
+        name: guid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Missing guid
+          schema:
+            type: string
+        "500":
+          description: Failed to generate tokens
+          schema:
+            type: string
+      summary: Получить токены
+      tags:
+      - auth
+swagger: "2.0"

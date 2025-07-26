@@ -13,6 +13,7 @@ func Serve() {
 	port := config.GetConfig().AppPort
 
 	routes.InitAuthRoutes(mux)
+	routes.InitSwaggerHandler(mux)
 
 	log.Printf("[INFO] Server started at http://localhost:%s\n", port)
 
