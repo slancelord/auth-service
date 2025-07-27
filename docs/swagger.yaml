@@ -1,15 +1,80 @@
+definitions:
+  handler.TokenRequest:
+    properties:
+      access:
+        type: string
+      refresh:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
-  /auth/token:
+  /api/auth/logout:
     post:
       consumes:
       - application/json
-      description: Генерирует access и refresh токены по GUID
+      description: Logout user
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Logout successful
+          schema:
+            type: string
+        "500":
+          description: Session not found or failed to logout
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Logout user
+      tags:
+      - auth
+  /api/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refreshes the token pair using a valid access token and refresh
+        token.
       parameters:
-      - description: GUID пользователя
-        in: query
-        name: guid
+      - description: Tokens for refresh
+        in: body
+        name: tokenRequest
+        required: true
+        schema:
+          $ref: '#/definitions/handler.TokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: New access and refresh tokens
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request body or Invalid token
+          schema:
+            type: string
+        "500":
+          description: Failed to generate new tokens or save session
+          schema:
+            type: string
+      summary: Refresh access and refresh tokens
+      tags:
+      - auth
+  /api/auth/token:
+    post:
+      consumes:
+      - application/json
+      description: Generates access and refresh tokens using a user GUID
+      parameters:
+      - description: User Agent
+        enum:
+        - Mozilla/5.0
+        - Opera/9.80
+        in: header
+        name: User-Agent
         required: true
         type: string
       produces:
@@ -22,14 +87,46 @@ paths:
               type: string
             type: object
         "400":
-          description: Missing guid
+          description: Missing GUID
           schema:
             type: string
         "500":
           description: Failed to generate tokens
           schema:
             type: string
-      summary: Получить токены
+      summary: Get tokens
       tags:
       - auth
+  /api/auth/user:
+    get:
+      consumes:
+      - application/json
+      description: Returns the GUID of the currently authenticated user using a valid
+        access token.
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: User GUID
+          schema:
+            type: string
+        "401":
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            type: string
+        "500":
+          description: Session not found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get current user ID
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    description: Type "Bearer <token>" for authorization.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

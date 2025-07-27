@@ -15,9 +15,43 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth/token": {
+        "/api/auth/logout": {
             "post": {
-                "description": "Генерирует access и refresh токены по GUID",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Logout user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Logout user",
+                "responses": {
+                    "200": {
+                        "description": "Logout successful",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Session not found or failed to logout",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/refresh": {
+            "post": {
+                "description": "Refreshes the token pair using a valid access token and refresh token.",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,13 +61,66 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Получить токены",
+                "summary": "Refresh access and refresh tokens",
                 "parameters": [
                     {
+                        "description": "Tokens for refresh",
+                        "name": "tokenRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.TokenRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "New access and refresh tokens",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body or Invalid token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to generate new tokens or save session",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/token": {
+            "post": {
+                "description": "Generates access and refresh tokens using a user GUID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get tokens",
+                "parameters": [
+                    {
+                        "enum": [
+                            "Mozilla/5.0",
+                            "Opera/9.80"
+                        ],
                         "type": "string",
-                        "description": "GUID пользователя",
-                        "name": "guid",
-                        "in": "query",
+                        "description": "User Agent",
+                        "name": "User-Agent",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -48,7 +135,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Missing guid",
+                        "description": "Missing GUID",
                         "schema": {
                             "type": "string"
                         }
@@ -61,6 +148,67 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/auth/user": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Returns the GUID of the currently authenticated user using a valid access token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get current user ID",
+                "responses": {
+                    "200": {
+                        "description": "User GUID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized: Missing or invalid token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Session not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handler.TokenRequest": {
+            "type": "object",
+            "properties": {
+                "access": {
+                    "type": "string"
+                },
+                "refresh": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "description": "Type \"Bearer \u003ctoken\u003e\" for authorization.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
