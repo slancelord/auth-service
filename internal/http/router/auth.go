@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"auth-service/internal/handler"
+	"auth-service/internal/http/middleware"
 )
 
 func InitAuthRoutes(mux *http.ServeMux) {
