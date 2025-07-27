@@ -8,7 +8,9 @@ import (
 )
 
 func InitAuthRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /auth/user", handler.UserHandler)
+	mux.Handle("GET /api/auth/user", middleware.Auth(http.HandlerFunc(handler.UserHandler)))
 
-	mux.HandleFunc("POST /auth/token", handler.TokenHandler)
+	mux.HandleFunc("POST /api/auth/token", handler.TokenHandler)
+	mux.HandleFunc("POST /api/auth/refresh", handler.RefreshTokenHandler)
+	mux.Handle("POST /api/auth/logout", middleware.Auth(http.HandlerFunc(handler.LogoutHandler)))
 }
