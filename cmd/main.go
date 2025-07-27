@@ -3,7 +3,7 @@ package main
 import (
 	"auth-service/internal/config"
 	"auth-service/internal/database"
-	"auth-service/internal/server"
+	"auth-service/internal/http"
 )
 
 func main() {
@@ -12,5 +12,5 @@ func main() {
 	database.Init()
 	defer database.GetDB().Close()
 
-	server.Serve()
+	http.Serve()
 }

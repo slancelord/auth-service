@@ -1,19 +1,19 @@
-package server
+package http
 
 import (
 	"log"
 	"net/http"
 
 	"auth-service/internal/config"
-	"auth-service/internal/routers"
+	"auth-service/internal/http/router"
 )
 
 func Serve() {
 	mux := http.NewServeMux()
 	port := config.GetConfig().AppPort
 
-	routers.InitAuthRoutes(mux)
-	routers.InitSwaggerHandler(mux)
+	router.InitAuthRoutes(mux)
+	router.InitSwaggerHandler(mux)
 
 	log.Printf("[INFO] Server started at http://localhost:%s\n", port)
 
