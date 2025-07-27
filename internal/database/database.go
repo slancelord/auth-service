@@ -1,46 +1,49 @@
 package database
 
 import (
-	"database/sql"
+	"auth-service/internal/config"
 	"fmt"
 	"log"
 	"sync"
 
-	"auth-service/internal/config"
-
-	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var (
-	db   *sql.DB
+	db   *gorm.DB
 	once sync.Once
 )
 
 func Init() {
 	once.Do(func() {
-		config := config.GetConfig()
+		cfg := config.GetConfig()
 
 		dsn := fmt.Sprintf(
 			"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-			config.DBHost, config.DBPort, config.DBUser, config.DBPassword, config.DBName,
+			cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName,
 		)
 
 		var err error
-		db, err = sql.Open("postgres", dsn)
+		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 		if err != nil {
-			log.Fatalf("[ERROR] Failed to open database connection: %v", err)
+			log.Fatalf("[ERROR] Failed to open GORM connection: %v", err)
 		}
 
-		err = db.Ping()
+		sqlDB, err := db.DB()
 		if err != nil {
-			log.Fatalf("[ERROR] Database ping failed: %v", err)
+			log.Fatalf("[ERROR] Failed to get sql.DB from GORM: %v", err)
+		}
+
+		if err := sqlDB.Ping(); err != nil {
+			log.Fatalf("[ERROR] Ping failed: %v", err)
 		}
 	})
 }
 
-func GetDB() *sql.DB {
+func Get() *gorm.DB {
 	if db == nil {
-		log.Fatal("[ERROR] Database not initialized")
+		log.Fatal("[ERROR] GORM database not initialized")
 	}
 	return db
 }
