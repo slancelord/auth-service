@@ -34,6 +34,19 @@ func getEnv(key string, defaultValue string) string {
 	return defaultValue
 }
 
+func getEnvAsInt(key string, defaultValue int) int {
+	valStr, exist := os.LookupEnv(key)
+	if !exist {
+		return defaultValue
+	}
+
+	valInt, err := strconv.Atoi(valStr)
+	if err != nil {
+		return defaultValue
+	}
+	return valInt
+}
+
 func GetConfig() *Config {
 	if config == nil {
 		log.Fatal("[ERROR] Config is not initialized")
