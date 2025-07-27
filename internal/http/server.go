@@ -8,6 +8,11 @@ import (
 	"auth-service/internal/http/router"
 )
 
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer <token>" for authorization.
+
 func Serve() {
 	mux := http.NewServeMux()
 	port := config.GetConfig().AppPort
