@@ -10,7 +10,6 @@ func main() {
 	config.Init()
 
 	database.Init()
-	defer database.GetDB().Close()
 
 	http.Serve()
 }
