@@ -123,10 +123,4 @@ paths:
       summary: Get current user ID
       tags:
       - auth
-securityDefinitions:
-  ApiKeyAuth:
-    description: Type "Bearer <token>" for authorization.
-    in: header
-    name: Authorization
-    type: apiKey
 swagger: "2.0"
