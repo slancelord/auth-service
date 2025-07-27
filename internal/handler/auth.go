@@ -58,6 +58,17 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// UserHandler godoc
+// @Summary Get current user ID
+// @Description Returns the GUID of the currently authenticated user using a valid access token.
+// @Tags auth
+// @Accept json
+// @Produce plain
+// @Security ApiKeyAuth
+// @Success 200 {string} string "User GUID"
+// @Failure 401 {string} string "Unauthorized: Missing or invalid token"
+// @Failure 500 {string} string "Session not found"
+// @Router /api/auth/user [get]
 func UserHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Test Message"))
 }
