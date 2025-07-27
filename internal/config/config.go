@@ -16,7 +16,11 @@ type Config struct {
 	DBPassword string
 	DBName     string
 
-	JWTSecret string
+	JWTSecret        string
+	AccessExpireMin  int
+	RefreshExpireDay int
+
+	WebhookUrl string
 }
 
 var config *Config
@@ -52,6 +56,10 @@ func Init() {
 		DBPassword: getEnv("POSTGRES_PASSWORD", "password"),
 		DBName:     getEnv("POSTGRES_DB", "db"),
 
-		JWTSecret: getEnv("JWT_SECRET", "defaultsecret"),
+		AccessExpireMin:  getEnvAsInt("ACCESS_TOKEN_EXPIRE_MINUTES", 5),
+		RefreshExpireDay: getEnvAsInt("REFRESH_TOKEN_EXPIRE_DAYS", 7),
+		JWTSecret:        getEnv("JWT_SECRET", "defaultsecret"),
+
+		WebhookUrl: getEnv("WEBHOOK_URL", "http://localhost:8080/webhook"),
 	}
 }
