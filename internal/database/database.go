@@ -17,11 +17,11 @@ var (
 
 func Init() {
 	once.Do(func() {
-		cfg := config.GetConfig()
+		config := config.GetConfig()
 
 		dsn := fmt.Sprintf(
 			"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-			cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName,
+			config.DBHost, config.DBPort, config.DBUser, config.DBPassword, config.DBName,
 		)
 
 		var err error
