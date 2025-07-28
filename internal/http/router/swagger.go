@@ -8,6 +8,6 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
-func InitSwaggerHandler(mux *http.ServeMux) {
+func InitSwaggerRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 }
